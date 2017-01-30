@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>CHIP-8 Interpreter</title>
+</head>
+<body>
+	<canvas id="display" width="1024" height="768"></canvas>
+	<div>
+		Select a file:
+		<input type="file" id="fileInput" onchange="handleFiles(this.files)">
+	</div>
+
+<script src="opcodes.js"></script>
+<script src="CHIP_8.js"></script>
+<script src="main.js"></script>
+</body>
+</html>
