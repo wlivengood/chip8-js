@@ -142,8 +142,9 @@ const ops = {
 		this.pc += 2;
 	},
 
-	// Dxyn - Display at screen coordinate (Vx, Vy) n-byte sprite starting at 
-	// location stored in I. Set Vf = 1 if collision occurs, else 0
+	// Dxyn - Display at coordinate (Vx, Vy) n-byte sprite starting at 
+	// location stored in I. Set Vf = 1 if collision occurs, else 0.
+	// Set draw flag to true
 	DRW_Vx_Vy_nibble(op) {
 		const x = this.V[(op & 0xF00) >> 8];
 		const y = this.V[(op & 0xF0) >> 4];
@@ -213,7 +214,7 @@ const ops = {
 
 	// Fx29 - Set I = location of sprite for digit Vx
 	LD_F_Vx(op) {
-		this.I = this.memory[this.V[(op & 0xF00) >> 8]] * 5;
+		this.I = this.V[(op & 0xF00) >> 8] * 5;
 		this.pc += 2;
 	},
 

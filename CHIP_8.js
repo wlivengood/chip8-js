@@ -86,9 +86,6 @@ class CHIP_8 {
 		// Buffer to hold key presses
 		this.keyBoard = new Uint8Array(16);
 
-		// Key currently pressed
-		this.currentKey = null;
-
 		// Reference to interval used for timers
 		this.interval = null;
 
@@ -107,35 +104,21 @@ class CHIP_8 {
 
 	initialize() {
 
-		// Clear memory
+		// Clear everything
 		this.memory = new Uint8Array(4096);
-
-		// Clear registers
 		this.V = new Uint8Array(16);
-
-		// Clear stack
 		this.stack = new Uint16Array(16);
-
-		// Clear graphics memory
 		this.graphics = new Uint8Array(64 * 32);
-
-		// Clear keyboard
 		this.keyBoard = new Uint8Array(16);
 
-		// Reset register I to 0
 		this.I = 0;
-
-		// Reset stack pointer to 0
 		this.sp = 0;
-
-		// Reset drawFlag to false;
 		this.drawFlag = false;
 
-		// Reset timers
 		this.delayTimer = 0;
 		this.soundTimer = 0;
 
-		// Clear interval and reset to 16 (~60 Hz)
+		// Clear interval and set to 16 (~60 Hz)
 		const tick = this.tick.bind(this);
 		if (this.interval)
 			window.clearInterval(that.interval);
@@ -279,16 +262,16 @@ class CHIP_8 {
 
 	// Execute one iteration of the fetch-decode-execute cycle
 	cycle () {
-		let opcode = this.fetch();
-		let instruction = this.decode.call(this, opcode);
-		this.execute(instruction, opcode);
+		if (this.isInitialized) {
+			let opcode = this.fetch();
+			let instruction = this.decode.call(this, opcode);
+			this.execute(instruction, opcode);
+		}
 	}
 
-	// Run a CPU cycle and, if necessary, updated the display
+	// Run a CPU cycle and, if necessary, update the display
 	run () {
-		if (this.isInitialized) {
-			this.cycle();
-			this.render();
-		}
+		this.cycle();
+		this.render();
 	}
 };
