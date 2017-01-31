@@ -1,22 +1,14 @@
-let cycleInterval, renderInterval;
+let chip8, interval;
 
 const handleFiles = (files) => {
 	const file = files[0];
-	CHIP_8.initialize();
-	CHIP_8.loadROM(file);
-}
+	chip8.initialize();
+	chip8.loadROM(file);
+};
 
 window.onload = function() {
-	if (cycleInterval)
-		window.clearInterval(cycleInterval);
-	cycleInterval = window.setInterval(function() {
-		CHIP_8.cycle();
-	}, 1);
-
-	if (renderInterval)
-		window.clearInterval(renderInterval);
-	renderInterval = window.setInterval(function() {
-		if (CHIP_8.isInitialized)
-			CHIP_8.render();
-	}, 16);
+	chip8 = new CHIP_8();
+	if (interval)
+		window.clearInterval(interval);
+	interval = window.setInterval(() => chip8.run(), 1);
 };

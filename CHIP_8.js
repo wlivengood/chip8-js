@@ -53,55 +53,57 @@ const getByteString = (instr) => {
 }
 
 // Class to hold CHIP-8 processor
-let CHIP_8 = {
-	// ROM and RAM
-	memory: new Uint8Array(4096),
+class CHIP_8 {
+	constructor() {
+		// 4 KB of memory
+		this.memory = new Uint8Array(4096);
 
-	// 8-bit registers V0,V1,...VF. Used for most data manipulation. 
-	// VF is used as a flag (mostly for carries)
-	V: new Uint8Array(16),
+		// 16 8-bit registers V0,V1,...VF. Used for most data manipulation. 
+		// VF is used as a flag for arithmetic carries and collision detection
+		this.V = new Uint8Array(16);
 
-	// Stack to keep track of previous program counter during subroutine calls. Allows for 16 
-	// layers of nested calls
-	stack: new Uint16Array(16),
+		// Stack to hold 16-bit return addresses during subroutine calls. Allows for 16 
+		// layers of nested calls
+		this.stack = new Uint16Array(16);
 
-	// 16-bit register, used to hold memory addresses
-	I: 0,
+		// Pointer to keep track of the most recenet return address on the stack
+		this.sp = 0;
 
-	// Pointer to keep track of where we are in the program
-	pc: 0,
+		// 16-bit register, used to hold memory addresses
+		this.I = 0;
 
-	// Pointer to keep track of previous point during subroutine calls
-	sp: 0,
+		// Pointer to keep track of where we are in the program
+		this.pc = 0;
 
-	// Exposes 2 timers, which decrement when not zero at 60Hz. Sound timer emits a tone 
-	// when >0
-	delayTimer: 0,
-	soundTimer: 0,
+		// Two timers, which decrement when not zero at 60Hz. Sound timer emits a tone 
+		// when >0
+		this.delayTimer = 0;
+		this.soundTimer = 0;
 
-	// Draw flag set to true when the display has changed
-	drawFlag: false,
+		// Draw flag set to true when the graphics memory has changed
+		this.drawFlag = false;
 
-	// Buffer to hold key presses
-	keyBoard: new Uint8Array(16),
+		// Buffer to hold key presses
+		this.keyBoard = new Uint8Array(16);
 
-	// Key currently pressed
-	currentKey: null,
+		// Key currently pressed
+		this.currentKey = null;
 
-	// Reference to interval used for timers
-	interval: null,
+		// Reference to interval used for timers
+		this.interval = null;
 
-	// Holds pixels, each represented by 1 bit (CHIP-8 only uses 2 colors), for 64x32 display
-	graphics: new Uint8Array(64 * 32),
+		// Holds pixels, each represented by 1 bit (CHIP-8 only uses 2 colors), for 64x32 display
+		this.graphics = new Uint8Array(64 * 32);
 
-	// Screen display element
-	display: null,
+		// Screen display element
+		this.display = null;
 
-	// Start-up flag
-	isInitialized: false,
+		// Start-up flag
+		this.isInitialized = false;
 
-	// Key-press flag
-	keyPressed: false,
+		// Key-press flag
+		this.keyPressed = false;
+	}
 
 	initialize() {
 
@@ -143,22 +145,19 @@ let CHIP_8 = {
 		//interpreter itself), so most CHIP-8 programs start at 0x200
 		this.pc = 0x200;
 
-		// Load hex sprites into memory. I am using the reserved section because why not.
+		// Load hex sprites into reserved section of memory
 		this.memory = [...HEX_SPRITES, ...this.memory.slice(HEX_SPRITES.length)];
-
-		console.log(this.memory.slice(0, 0x1FF).map((val) => val.toString(16)));
 
 		// Add event listeners to listen for keyboard events and update internal 
 		//represntation of keyboard
-		document.onkeyup = this.updateKeyBoard.bind(this);
-		document.onkeydown = this.updateKeyBoard.bind(this);
+		document.onkeydown = document.onkeyup = this.updateKeyBoard.bind(this);
 
 		// Hook into display canvas
 		this.display = document.getElementById("display").getContext("2d");
 
 		// Set start-up flag to true
 		this.isInitialized = true;
-	},
+	}
 
 	// Load a binary game file into memory
 	loadROM (ROM) {
@@ -170,15 +169,15 @@ let CHIP_8 = {
 			buffer.forEach((byte, i) => that.memory[i + 0x200] = byte);
 		};
 		fr.readAsArrayBuffer(ROM);
-	},
+	}
 
 	// Update internal representation of keyboard on key events
 	updateKeyBoard (e) {
-		let key = KEY_MAP[e.key.toUpperCase()];
+		const key = KEY_MAP[e.key.toUpperCase()];
 		if (key)
 			this.keyBoard[key] = e.type === "keydown"? true: false;
 		this.keyPressed = this.keyBoard.includes(1);
-	},
+	}
 
 	// If draw flag is set, render graphics stored in graphics memory
 	render () {
@@ -196,7 +195,7 @@ let CHIP_8 = {
 			}
 		}
 		this.drawFlag = false;
-	},
+	}
 
 	// Decrement timers at ~60 Hz
 	tick () {
@@ -204,14 +203,14 @@ let CHIP_8 = {
 			this.delayTimer--;
 		if (this.soundTimer)
 			this.soundTimer--;
-	},
+	}
 
 	// Each instruction is 2 bytes, but memory slots hold 1 byte, so opcodes
 	// must be fetched by shifting an even byte left 8 bits and ORing with
 	// the next byte
 	fetch () {
 		return (this.memory[this.pc] << 8) | this.memory[this.pc + 1];
-	},
+	}
 
 	// Decode opcode using tree structure based on byte comparisons
 	decode (op) {
@@ -268,19 +267,28 @@ let CHIP_8 = {
 
 				}[getByteString(op & 0xFF)]
 			}
-
 		}[getByteString(op & 0xF000)];
-	},
+	}
 
-	// Execute machine instruction specified by opcode
+	// Execute machine instruction specified by opcode. 
+	// (Keep calling result of function calls to move through tree)
 	execute (instruction, opcode) {
 		while (instruction)
-			instruction = instruction(opcode);
-	},
+			instruction = instruction.call(this, opcode);
+	}
 
+	// Execute one iteration of the fetch-decode-execute cycle
 	cycle () {
 		let opcode = this.fetch();
-		let instruction = this.decode(opcode);
+		let instruction = this.decode.call(this, opcode);
 		this.execute(instruction, opcode);
+	}
+
+	// Run a CPU cycle and, if necessary, updated the display
+	run () {
+		if (this.isInitialized) {
+			this.cycle();
+			this.render();
+		}
 	}
 };
