@@ -183,13 +183,24 @@ const ops = {
 
 	// Fx0A - Wait for a key press, store value of the key in Vx
 	LD_Vx_K(op) {
-		this.keyBoard.forEach((val, idx) => {
-			if (val) {
-				this.V[(op & 0xF00) >> 8] = idx;
-				this.pc += 2;
-				return;
+		let keyPress = false;
+		for (let i = 0; i < 16; i++) {
+			if (this.keyBoard[i]) {
+				this.V[(op & 0xF00) >> 8] = i;
+				keyPress = true;
 			}
-		});
+		}
+		if (!keyPress)
+			return;
+		this.pc += 2;
+		// this.keyBoard.forEach((val, idx) => {
+		// 	if (val) {
+		// 		console.log(val);
+		// 		this.V[(op & 0xF00) >> 8] = idx;
+		// 		this.pc += 2;
+		// 		return;
+		// 	}
+		// });
 	},
 
 	// Fx15 - Set delay timer = Vx

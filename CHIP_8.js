@@ -157,9 +157,10 @@ class CHIP_8 {
 	// Update internal representation of keyboard on key events
 	updateKeyBoard (e) {
 		const key = KEY_MAP[e.key.toUpperCase()];
-		if (key)
+		if (key !== undefined)
 			this.keyBoard[key] = e.type === "keydown"? true: false;
 		this.keyPressed = this.keyBoard.includes(1);
+		console.log(this.keyBoard);
 	}
 
 	// If draw flag is set, render graphics stored in graphics memory
@@ -264,6 +265,7 @@ class CHIP_8 {
 	cycle () {
 		if (this.isInitialized) {
 			let opcode = this.fetch();
+			console.log(getByteString(opcode));
 			let instruction = this.decode.call(this, opcode);
 			this.execute(instruction, opcode);
 		}
