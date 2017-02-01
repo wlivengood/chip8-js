@@ -45,11 +45,23 @@ const KEY_MAP = {
 }
 
 // Returns constant-length string representation of hex instruction
-const getByteString = (instr) => {
-	let str = (instr).toString(16);
-	while (str.length < 4)
-		str = "0".concat(str);
-	return str;
+// const getByteString = (instr) => {
+// 	let str = (instr).toString(16);
+// 	while (str.length < 4)
+// 		str = "0".concat(str);
+// 	return str;
+// }
+class Opcode {
+	constructor(hex) {
+		this.op = hex;
+	}
+
+	toString() {
+		let str = (this.op).toString(16);
+		while (str.length < 4)
+			str = "0".concat(str);
+		return str;
+	}
 }
 
 // Class to implement CHIP-8 processor
@@ -202,7 +214,7 @@ class CHIP_8 {
 				return {
 					"00e0": ops.CLS,
 					"00ee": ops.RET,
-				}[getByteString(op)];
+				}[new Opcode(op)];
 			},
 			"1000": ops.JP_addr,
 			"2000": ops.CALL_addr,
@@ -223,7 +235,7 @@ class CHIP_8 {
 					"0007": ops.SUBN_Vx_Vy,
 					"000e": ops.SHL_Vx
 
-				}[getByteString(op & 0xF)];
+				}[new Opcode(op & 0xF)];
 			},
 			"9000": ops.SNE_Vx_Vy,
 			"a000": ops.LD_I_addr,
@@ -234,7 +246,7 @@ class CHIP_8 {
 				return {
 					"009e": ops.SKP_Vx,
 					"00a1": ops.SKNP_Vx
-				}[getByteString(op & 0xFF)];
+				}[new Opcode(op & 0xFF)];
 			},
 			"f000": () => {
 				return {
@@ -248,9 +260,9 @@ class CHIP_8 {
 					"0055": ops.LD_I_Vx,
 					"0065": ops.LD_Vx_I,
 
-				}[getByteString(op & 0xFF)];
+				}[new Opcode(op & 0xFF)];
 			}
-		}[getByteString(op & 0xF000)];
+		}[new Opcode(op & 0xF000)];
 	}
 
 	// Execute machine instruction specified by opcode. 
