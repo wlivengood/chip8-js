@@ -52,7 +52,7 @@ const getByteString = (instr) => {
 	return str;
 }
 
-// Class to hold CHIP-8 processor
+// Class to implement CHIP-8 processor
 class CHIP_8 {
 	constructor() {
 		// 4 KB of memory
@@ -66,7 +66,7 @@ class CHIP_8 {
 		// layers of nested calls
 		this.stack = new Uint16Array(16);
 
-		// Pointer to keep track of the most recenet return address on the stack
+		// Pointer to keep track of the most recent return address on the stack
 		this.sp = 0;
 
 		// 16-bit register, used to hold memory addresses
@@ -158,9 +158,8 @@ class CHIP_8 {
 	updateKeyBoard (e) {
 		const key = KEY_MAP[e.key.toUpperCase()];
 		if (key !== undefined)
-			this.keyBoard[key] = e.type === "keydown"? true: false;
+			this.keyBoard[key] = e.type === "keydown"? 1: 0;
 		this.keyPressed = this.keyBoard.includes(1);
-		console.log(this.keyBoard);
 	}
 
 	// If draw flag is set, render graphics stored in graphics memory
@@ -267,7 +266,6 @@ class CHIP_8 {
 	cycle () {
 		if (this.isInitialized) {
 			let opcode = this.fetch();
-			console.log(getByteString(opcode));
 			let instruction = this.decode.call(this, opcode);
 			this.execute(instruction, opcode);
 		}
