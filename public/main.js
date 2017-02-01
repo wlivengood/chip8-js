@@ -2,8 +2,7 @@ let interval;
 
 const handleFiles = (file) => {
 	let chip8 = new CHIP_8();
-	chip8.initialize();
-	chip8.loadROM(file);
+	chip8.initialize().loadROM(file);
 	if (interval)
 		window.clearInterval(interval);
 	interval = window.setInterval(() => chip8.run(), 1);

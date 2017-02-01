@@ -44,7 +44,7 @@ const KEY_MAP = {
 	"V": 0xF
 }
 
-// Opcode class. Custom toString prototype method returns constant-length
+// Opcode class. Overridden toString prototype method returns constant-length
 // string representation for easy parsing during decoding
 class Opcode {
 	constructor(hex) {
@@ -72,6 +72,9 @@ class CHIP_8 {
 		// Stack to hold 16-bit return addresses during subroutine calls. Allows for 16 
 		// layers of nested calls
 		this.stack = new Uint16Array(16);
+
+		// Holds implementation of machine operations
+		this.ops = new InstructionSet();
 
 		// Pointer to keep track of the most recent return address on the stack
 		this.sp = 0;
@@ -147,6 +150,9 @@ class CHIP_8 {
 
 		// Set start-up flag to true
 		this.isInitialized = true;
+
+		// Return this for method chaining
+		return this;
 	}
 
 	// Load a binary game file into memory
@@ -207,53 +213,53 @@ class CHIP_8 {
 		return {
 			"0000": () => {
 				return {
-					"00e0": ops.CLS,
-					"00ee": ops.RET,
+					"00e0": this.ops.CLS,
+					"00ee": this.ops.RET,
 				}[new Opcode(op)];
 			},
-			"1000": ops.JP_addr,
-			"2000": ops.CALL_addr,
-			"3000": ops.SE_Vx_byte,
-			"4000": ops.SNE_Vx_byte,
-			"5000": ops.SE_Vx_Vy,
-			"6000": ops.LD_Vx_byte,
-			"7000": ops.ADD_Vx_byte,
+			"1000": this.ops.JP_addr,
+			"2000": this.ops.CALL_addr,
+			"3000": this.ops.SE_Vx_byte,
+			"4000": this.ops.SNE_Vx_byte,
+			"5000": this.ops.SE_Vx_Vy,
+			"6000": this.ops.LD_Vx_byte,
+			"7000": this.ops.ADD_Vx_byte,
 			"8000": () => {
 				return {
-					"0000": ops.LD_Vx_Vy,
-					"0001": ops.OR_Vx_Vy,
-					"0002": ops.AND_Vx_Vy,
-					"0003": ops.XOR_Vx_Vy,
-					"0004": ops.ADD_Vx_Vy,
-					"0005": ops.SUB_Vx_Vy,
-					"0006": ops.SHR_Vx,
-					"0007": ops.SUBN_Vx_Vy,
-					"000e": ops.SHL_Vx
+					"0000": this.ops.LD_Vx_Vy,
+					"0001": this.ops.OR_Vx_Vy,
+					"0002": this.ops.AND_Vx_Vy,
+					"0003": this.ops.XOR_Vx_Vy,
+					"0004": this.ops.ADD_Vx_Vy,
+					"0005": this.ops.SUB_Vx_Vy,
+					"0006": this.ops.SHR_Vx,
+					"0007": this.ops.SUBN_Vx_Vy,
+					"000e": this.ops.SHL_Vx
 
 				}[new Opcode(op & 0xF)];
 			},
-			"9000": ops.SNE_Vx_Vy,
-			"a000": ops.LD_I_addr,
-			"b000": ops.JP_V0_addr,
-			"c000": ops.RND_Vx_byte,
-			"d000": ops.DRW_Vx_Vy_nibble,
+			"9000": this.ops.SNE_Vx_Vy,
+			"a000": this.ops.LD_I_addr,
+			"b000": this.ops.JP_V0_addr,
+			"c000": this.ops.RND_Vx_byte,
+			"d000": this.ops.DRW_Vx_Vy_nibble,
 			"e000": () => {
 				return {
-					"009e": ops.SKP_Vx,
-					"00a1": ops.SKNP_Vx
+					"009e": this.ops.SKP_Vx,
+					"00a1": this.ops.SKNP_Vx
 				}[new Opcode(op & 0xFF)];
 			},
 			"f000": () => {
 				return {
-					"0007": ops.LD_Vx_DT,
-					"000a": ops.LD_Vx_K,
-					"0015": ops.LD_DT_Vx,
-					"0018": ops.LD_ST_Vx,
-					"001e": ops.ADD_I_Vx,
-					"0029": ops.LD_F_Vx,
-					"0033": ops.LD_B_Vx,
-					"0055": ops.LD_I_Vx,
-					"0065": ops.LD_Vx_I,
+					"0007": this.ops.LD_Vx_DT,
+					"000a": this.ops.LD_Vx_K,
+					"0015": this.ops.LD_DT_Vx,
+					"0018": this.ops.LD_ST_Vx,
+					"001e": this.ops.ADD_I_Vx,
+					"0029": this.ops.LD_F_Vx,
+					"0033": this.ops.LD_B_Vx,
+					"0055": this.ops.LD_I_Vx,
+					"0065": this.ops.LD_Vx_I,
 
 				}[new Opcode(op & 0xFF)];
 			}
@@ -263,17 +269,15 @@ class CHIP_8 {
 	// Execute machine instruction specified by opcode. 
 	// (Keep calling result of function calls to move through tree)
 	execute (instruction, opcode) {
-		while (instruction) {
-			console.log(instruction);
+		while (instruction)
 			instruction = instruction.call(this, opcode);
-		}
 	}
 
 	// Execute one iteration of the fetch-decode-execute cycle
 	cycle () {
 		if (this.isInitialized) {
 			let opcode = this.fetch();
-			let instruction = this.decode.call(this, opcode);
+			let instruction = this.decode(opcode);
 			this.execute(instruction, opcode);
 		}
 	}
