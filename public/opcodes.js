@@ -236,7 +236,6 @@ class InstructionSet {
 			this.memory[this.I + i] = this.V[i];
 			i++;
 		}
-		this.I += ((op & 0x0F00) >> 8) + 1;
 		this.pc += 2;
 	}
 
@@ -247,7 +246,6 @@ class InstructionSet {
 			this.V[i] = this.memory[this.I + i];
 			i++;
 		}
-		this.I += ((op & 0x0F00) >> 8) + 1;
 		this.pc += 2;
 	}
 };
