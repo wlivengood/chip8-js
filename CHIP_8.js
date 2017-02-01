@@ -240,7 +240,7 @@ class CHIP_8 {
 			"f000": () => {
 				return {
 					"0007": ops.LD_Vx_DT,
-					"000A": ops.LD_Vx_K,
+					"000a": ops.LD_Vx_K,
 					"0015": ops.LD_DT_Vx,
 					"0018": ops.LD_ST_Vx,
 					"001e": ops.ADD_I_Vx,
@@ -249,7 +249,7 @@ class CHIP_8 {
 					"0055": ops.LD_I_Vx,
 					"0065": ops.LD_Vx_I,
 
-				}[getByteString(op & 0xFF)]
+				}[getByteString(op & 0xFF)];
 			}
 		}[getByteString(op & 0xF000)];
 	}
@@ -257,8 +257,10 @@ class CHIP_8 {
 	// Execute machine instruction specified by opcode. 
 	// (Keep calling result of function calls to move through tree)
 	execute (instruction, opcode) {
-		while (instruction)
+		while (instruction) {
+			console.log(instruction);
 			instruction = instruction.call(this, opcode);
+		}
 	}
 
 	// Execute one iteration of the fetch-decode-execute cycle
