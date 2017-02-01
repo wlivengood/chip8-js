@@ -44,7 +44,8 @@ const KEY_MAP = {
 	"V": 0xF
 }
 
-// Returns constant-length string representation of hex instruction
+// Opcode class. Custom toString prototype method returns constant-length
+// string representation for easy parsing during decoding
 class Opcode {
 	constructor(hex) {
 		this.op = hex;
