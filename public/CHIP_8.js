@@ -45,12 +45,6 @@ const KEY_MAP = {
 }
 
 // Returns constant-length string representation of hex instruction
-// const getByteString = (instr) => {
-// 	let str = (instr).toString(16);
-// 	while (str.length < 4)
-// 		str = "0".concat(str);
-// 	return str;
-// }
 class Opcode {
 	constructor(hex) {
 		this.op = hex;
