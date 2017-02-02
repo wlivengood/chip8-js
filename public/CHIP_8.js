@@ -130,8 +130,9 @@ class CHIP_8 {
 
 		// Clear interval and set to 16 (~60 Hz)
 		const tick = this.tick.bind(this);
-		if (this.interval)
-			window.clearInterval(that.interval);
+		let interval = this.interval;
+		if (interval)
+			window.clearInterval(interval);
 		this.interval = window.setInterval(tick, 16);
 
 		// Set program counter to 0x200. The first 512 bytes are reserved (originally for the 
