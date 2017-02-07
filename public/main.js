@@ -9,6 +9,7 @@ const handleFiles = (file) => {
 };
 
 const fetchFile = (event) => {
+	event.target.blur();
 	let req = new XMLHttpRequest();
 	req.open("GET", "/games/" + event.target.value);
 	req.responseType = "blob";
