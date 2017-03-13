@@ -1,3 +1,4 @@
+const CHIP_8 = require('./CHIP_8');
 let interval;
 
 const handleFiles = (file) => {
@@ -21,3 +22,5 @@ const fetchFile = (event) => {
 	};
 	req.send();
 };
+
+export {handleFiles, fetchFile};

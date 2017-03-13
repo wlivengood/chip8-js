@@ -7,7 +7,7 @@
 	<canvas id="display" width="960" height="480"></canvas>
 	<div>
 		Select a game:
-		<select onchange="fetchFile(event)">
+		<select name="games">
 			<option value="15PUZZLE">15PUZZLE</option>
 			<option value="BLINKY">BLINKY</option>
 			<option value="BLITZ">BLITZ</option>
@@ -35,11 +35,9 @@
 	</div>
 	<div>
 		Upload a file:
-		<input type="file" id="fileInput" onchange="handleFiles(this.files[0])">
+		<input type="file" id="fileInput">
 	</div>
 
-<script src="opcodes.js"></script>
-<script src="CHIP_8.js"></script>
-<script src="main.js"></script>
+<script src="app.bundle.js"></script>
 </body>
 </html>

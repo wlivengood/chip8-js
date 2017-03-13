@@ -1,0 +1,26 @@
+{
+  "name": "chip-8",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {},
+  "devDependencies": {
+    "webpack": "^2.2.1"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "start": "node server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wlivengood/chip8-js.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wlivengood/chip8-js/issues"
+  },
+  "homepage": "https://github.com/wlivengood/chip8-js#readme"
+}
