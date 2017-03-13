@@ -77,8 +77,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 const CHIP_8 = __webpack_require__(1);
 let interval;
 
-const handleFiles = (event) => {
-	let file = event.target.files[0];
+const handleFiles = (file) => {
 	let chip8 = new CHIP_8();
 	chip8.initialize().loadROM(file);
 	if (interval)
