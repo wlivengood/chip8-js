@@ -9,6 +9,10 @@ const handleFiles = (file) => {
 	interval = window.setInterval(() => chip8.run(), 1);
 };
 
+const handleUpload = (event) => {
+	handleFiles(event.target.files[0]);
+}
+
 const fetchFile = (event) => {
 	event.target.blur();
 	let req = new XMLHttpRequest();
@@ -23,4 +27,4 @@ const fetchFile = (event) => {
 	req.send();
 };
 
-export {handleFiles, fetchFile};
+module.exports = {fetchFile, handleUpload};

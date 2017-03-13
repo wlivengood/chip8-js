@@ -1,4 +1,4 @@
-const {fetchFile, handleFiles} = require('./handlers');
+const {fetchFile, handleUpload} = require('./handlers');
 
 (function () {
 	document.addEventListener('DOMContentLoaded',function() {
@@ -7,6 +7,6 @@ const {fetchFile, handleFiles} = require('./handlers');
 
 	document.addEventListener('DOMContentLoaded', function() {
 		var fileInput = document.getElementById("fileInput");
-		fileInput.addEventListener("change", handleFiles, false);
+		fileInput.addEventListener("change", handleUpload, false);
 	}, false);
 })();

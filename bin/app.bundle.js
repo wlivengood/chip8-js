@@ -68,22 +68,24 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, exports, __webpack_require__) {
 
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "handleFiles", function() { return handleFiles; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "fetchFile", function() { return fetchFile; });
 const CHIP_8 = __webpack_require__(1);
 let interval;
 
 const handleFiles = (file) => {
+	console.log('in handleFiles');
 	let chip8 = new CHIP_8();
 	chip8.initialize().loadROM(file);
 	if (interval)
 		window.clearInterval(interval);
 	interval = window.setInterval(() => chip8.run(), 1);
 };
+
+const handleUpload = (event) => {
+	console.log("in handleUpload");
+	handleFiles(event.target.files[0]);
+}
 
 const fetchFile = (event) => {
 	event.target.blur();
@@ -99,7 +101,7 @@ const fetchFile = (event) => {
 	req.send();
 };
 
-
+module.exports = {fetchFile, handleUpload};
 
 /***/ }),
 /* 1 */
@@ -663,7 +665,7 @@ module.exports = InstructionSet;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const {fetchFile, handleFiles} = __webpack_require__(0);
+const {fetchFile, handleUpload} = __webpack_require__(0);
 
 (function () {
 	document.addEventListener('DOMContentLoaded',function() {
@@ -672,7 +674,7 @@ const {fetchFile, handleFiles} = __webpack_require__(0);
 
 	document.addEventListener('DOMContentLoaded', function() {
 		var fileInput = document.getElementById("fileInput");
-		fileInput.addEventListener("change", handleFiles, false);
+		fileInput.addEventListener("change", handleUpload, false);
 	}, false);
 })();
 
