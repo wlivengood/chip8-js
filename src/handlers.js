@@ -1,6 +1,8 @@
+const CHIP_8 = require('./CHIP_8');
 let interval;
 
-const handleFiles = (file) => {
+const handleFiles = (event) => {
+	let file = event.target.files[0];
 	let chip8 = new CHIP_8();
 	chip8.initialize().loadROM(file);
 	if (interval)
@@ -21,3 +23,5 @@ const fetchFile = (event) => {
 	};
 	req.send();
 };
+
+export {handleFiles, fetchFile};

@@ -249,3 +249,5 @@ class InstructionSet {
 		this.pc += 2;
 	}
 };
+
+module.exports = InstructionSet;

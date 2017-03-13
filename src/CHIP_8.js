@@ -1,3 +1,5 @@
+const InstructionSet = require('./opcodes');
+
 // A group of built-in sprites corresponding to hex digits 0-F
 const HEX_SPRITES = [
 	  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -289,3 +291,5 @@ class CHIP_8 {
 		this.render();
 	}
 };
+
+module.exports = CHIP_8;

@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-app.use(express.static('public'));
+app.use(express.static('bin'));
 
 app.get('/games/:game', function(req, res, next) {
 	const options = {root: __dirname + '/games/'};
