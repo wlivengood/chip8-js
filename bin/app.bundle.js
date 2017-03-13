@@ -73,26 +73,23 @@
 const CHIP_8 = __webpack_require__(1);
 let interval;
 
-const handleFiles = (file) => {
-	console.log('in handleFiles');
+const handleFiles = file => {
 	let chip8 = new CHIP_8();
 	chip8.initialize().loadROM(file);
-	if (interval)
-		window.clearInterval(interval);
+	if (interval) window.clearInterval(interval);
 	interval = window.setInterval(() => chip8.run(), 1);
 };
 
-const handleUpload = (event) => {
-	console.log("in handleUpload");
+const handleUpload = event => {
 	handleFiles(event.target.files[0]);
-}
+};
 
-const fetchFile = (event) => {
+const fetchFile = event => {
 	event.target.blur();
 	let req = new XMLHttpRequest();
 	req.open("GET", "/games/" + event.target.value);
 	req.responseType = "blob";
-	req.onload = (e) => {
+	req.onload = e => {
 		let blob = req.response;
 		if (blob) {
 			handleFiles(blob);
@@ -101,7 +98,7 @@ const fetchFile = (event) => {
 	req.send();
 };
 
-module.exports = {fetchFile, handleUpload};
+module.exports = { fetchFile, handleUpload };
 
 /***/ }),
 /* 1 */
@@ -110,24 +107,23 @@ module.exports = {fetchFile, handleUpload};
 const InstructionSet = __webpack_require__(2);
 
 // A group of built-in sprites corresponding to hex digits 0-F
-const HEX_SPRITES = [
-	  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
-	  0x20, 0x60, 0x20, 0x20, 0x70, // 1
-	  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
-	  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
-	  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
-	  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
-	  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
-	  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
-	  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
-	  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
-	  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
-	  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
-	  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
-	  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
-	  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
-	  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
-	];
+const HEX_SPRITES = [0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+0x20, 0x60, 0x20, 0x20, 0x70, // 1
+0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+0xF0, 0x80, 0xF0, 0x80, 0x80 // F
+];
 
 // Map keys to values on old hex keyboard
 // Original | New Mapping
@@ -153,7 +149,7 @@ const KEY_MAP = {
 	"X": 0x0,
 	"C": 0xB,
 	"V": 0xF
-}
+};
 
 // Opcode class. Overridden toString prototype method returns constant-length
 // string representation for easy parsing during decoding
@@ -163,9 +159,8 @@ class Opcode {
 	}
 
 	toString() {
-		let str = (this.op).toString(16);
-		while (str.length < 4)
-			str = "0".concat(str);
+		let str = this.op.toString(16);
+		while (str.length < 4) str = "0".concat(str);
 		return str;
 	}
 }
@@ -242,8 +237,7 @@ class CHIP_8 {
 		// Clear interval and set to 16 (~60 Hz)
 		const tick = this.tick.bind(this);
 		let interval = this.interval;
-		if (interval)
-			window.clearInterval(interval);
+		if (interval) window.clearInterval(interval);
 		this.interval = window.setInterval(tick, 16);
 
 		// Set program counter to 0x200. The first 512 bytes are reserved (originally for the 
@@ -268,7 +262,7 @@ class CHIP_8 {
 	}
 
 	// Load a binary game file into memory
-	loadROM (ROM) {
+	loadROM(ROM) {
 		let fr = new FileReader();
 		let that = this;
 		fr.onloadend = () => {
@@ -280,25 +274,24 @@ class CHIP_8 {
 	}
 
 	// Update internal representation of keyboard on key events
-	updateKeyBoard (e) {
+	updateKeyBoard(e) {
 		const key = KEY_MAP[e.key.toUpperCase()];
-		if (key !== undefined)
-			this.keyBoard[key] = e.type === "keydown"? 1: 0;
+		if (key !== undefined) this.keyBoard[key] = e.type === "keydown" ? 1 : 0;
 		this.keyPressed = this.keyBoard.includes(1);
 	}
 
 	// If draw flag is set, render graphics stored in graphics memory
-	render () {
+	render() {
 		if (this.drawFlag) {
 			let i, x, y;
 			this.display.fillStyle = "black";
-			this.display.fillRect(0, 0, 64*15, 32*15);
+			this.display.fillRect(0, 0, 64 * 15, 32 * 15);
 			this.display.fillStyle = "white";
 			for (i = 0; i < this.graphics.length; i++) {
 				if (this.graphics[i]) {
 					y = Math.floor(i / 64);
-					x = (i - y * 64);
-					this.display.fillRect(x*15, y*15, 15, 15);
+					x = i - y * 64;
+					this.display.fillRect(x * 15, y * 15, 15, 15);
 				}
 			}
 		}
@@ -306,27 +299,25 @@ class CHIP_8 {
 	}
 
 	// Decrement timers at ~60 Hz
-	tick () {
-		if (this.delayTimer)
-			this.delayTimer--;
-		if (this.soundTimer)
-			this.soundTimer--;
+	tick() {
+		if (this.delayTimer) this.delayTimer--;
+		if (this.soundTimer) this.soundTimer--;
 	}
 
 	// Each instruction is 2 bytes, but memory slots hold 1 byte, so opcodes
 	// must be fetched by shifting an even byte left 8 bits and ORing with
 	// the next byte
-	fetch () {
-		return (this.memory[this.pc] << 8) | this.memory[this.pc + 1];
+	fetch() {
+		return this.memory[this.pc] << 8 | this.memory[this.pc + 1];
 	}
 
 	// Decode opcode using tree structure based on byte comparisons
-	decode (op) {
+	decode(op) {
 		return {
 			"0000": () => {
 				return {
 					"00e0": this.ops.CLS,
-					"00ee": this.ops.RET,
+					"00ee": this.ops.RET
 				}[new Opcode(op)];
 			},
 			"1000": this.ops.JP_addr,
@@ -371,7 +362,7 @@ class CHIP_8 {
 					"0029": this.ops.LD_F_Vx,
 					"0033": this.ops.LD_B_Vx,
 					"0055": this.ops.LD_I_Vx,
-					"0065": this.ops.LD_Vx_I,
+					"0065": this.ops.LD_Vx_I
 
 				}[new Opcode(op & 0xFF)];
 			}
@@ -380,13 +371,12 @@ class CHIP_8 {
 
 	// Execute machine instruction specified by opcode. 
 	// (Keep calling result of function calls to move through tree)
-	execute (instruction, opcode) {
-		while (instruction)
-			instruction = instruction.call(this, opcode);
+	execute(instruction, opcode) {
+		while (instruction) instruction = instruction.call(this, opcode);
 	}
 
 	// Execute one iteration of the fetch-decode-execute cycle
-	cycle () {
+	cycle() {
 		if (this.isInitialized) {
 			let opcode = this.fetch();
 			let instruction = this.decode(opcode);
@@ -395,7 +385,7 @@ class CHIP_8 {
 	}
 
 	// Run a CPU cycle and, if necessary, update the display
-	run () {
+	run() {
 		this.cycle();
 		this.render();
 	}
@@ -437,28 +427,28 @@ class InstructionSet {
 
 	// 3xkk - Skip next instruction if Vx === kk
 	SE_Vx_byte(op) {
-		this.pc += (this.V[(op & 0xF00) >> 8] === (op & 0xFF))? 4: 2;
+		this.pc += this.V[(op & 0xF00) >> 8] === (op & 0xFF) ? 4 : 2;
 	}
 
 	// 4xkk - Skip next instruction if Vx !== kk
 	SNE_Vx_byte(op) {
-		this.pc += (this.V[(op & 0xF00) >> 8] !== (op & 0xFF))? 4: 2;
+		this.pc += this.V[(op & 0xF00) >> 8] !== (op & 0xFF) ? 4 : 2;
 	}
 
 	// 5xy0 - Skip next instruction if Vx === Vy
 	SE_Vx_Vy(op) {
-		this.pc += (this.V[(op & 0xF00) >> 8] === this.V[(op & 0xF0) >> 4])? 4: 2;
+		this.pc += this.V[(op & 0xF00) >> 8] === this.V[(op & 0xF0) >> 4] ? 4 : 2;
 	}
 
 	// 6xkk - Set Vx = kk
-	LD_Vx_byte (op) {
+	LD_Vx_byte(op) {
 		this.V[(op & 0xF00) >> 8] = op & 0xFF;
 		this.pc += 2;
 	}
 
 	// 7xkk - Set Vx = Vx + kk
 	ADD_Vx_byte(op) {
-		this.V[(op  & 0xF00) >> 8] += op & 0xFF;
+		this.V[(op & 0xF00) >> 8] += op & 0xFF;
 		this.pc += 2;
 	}
 
@@ -489,8 +479,8 @@ class InstructionSet {
 	// 8xy4 - Set Vx = Vx + Vy, set Vf = 1 if Vx + Vy > 255
 	ADD_Vx_Vy(op) {
 		let x = (op & 0xF00) >> 8,
-			y = (op & 0xF0) >> 4;
-		this.V[0xF] = (this.V[x] + this.V[y] > 0xFF)? 1: 0;
+		    y = (op & 0xF0) >> 4;
+		this.V[0xF] = this.V[x] + this.V[y] > 0xFF ? 1 : 0;
 		this.V[x] += this.V[y];
 		this.pc += 2;
 	}
@@ -498,15 +488,15 @@ class InstructionSet {
 	// 8xy5 - If Vx > Vy, set Vf = 0, otherwise 1. Set Vx = Vx - Vy
 	SUB_Vx_Vy(op) {
 		let x = (op & 0xF00) >> 8,
-			y = (op & 0xF0) >> 4;
-		this.V[0xF] = this.V[y] > this.V[x]? 0: 1;
+		    y = (op & 0xF0) >> 4;
+		this.V[0xF] = this.V[y] > this.V[x] ? 0 : 1;
 		this.V[x] -= this.V[y];
 		this.pc += 2;
 	}
 
 	// 8xy6 - If the least-significant bit of Vx is 1, set VF = 1, else 0. Vx /= 2
 	SHR_Vx(op) {
-		let x = (op & 0xF00) >> 8
+		let x = (op & 0xF00) >> 8;
 		this.V[0xF] = this.V[x] & 1;
 		this.V[x] >>= 1;
 		this.pc += 2;
@@ -515,8 +505,8 @@ class InstructionSet {
 	// 8xy7 - If Vy > Vx, set Vf = 1, else 0. Vx = Vy - Vx
 	SUBN_Vx_Vy(op) {
 		let x = (op & 0xF00) >> 8,
-			y = (op & 0xF0) >> 4;
-		this.V[0xF] = (this.V[x] > this.V[y])? 0: 1;
+		    y = (op & 0xF0) >> 4;
+		this.V[0xF] = this.V[x] > this.V[y] ? 0 : 1;
 		this.V[x] = this.V[y] - this.V[x];
 		this.pc += 2;
 	}
@@ -531,7 +521,7 @@ class InstructionSet {
 
 	// 9xy0 - Skip next instruction if Vx !== Vy
 	SNE_Vx_Vy(op) {
-		this.pc += (this.V[(op & 0xF00) >> 8] === this.V[(op & 0xF0) >> 4])? 2: 4;
+		this.pc += this.V[(op & 0xF00) >> 8] === this.V[(op & 0xF0) >> 4] ? 2 : 4;
 	}
 
 	// Annn - Set I = nnn
@@ -547,7 +537,7 @@ class InstructionSet {
 
 	// Cxkk - Set Vx = to kk AND random byte
 	RND_Vx_byte(op) {
-		this.V[(op & 0xF00) >> 8] = (op & 0xFF) & Math.floor(Math.random() * 0xFF);
+		this.V[(op & 0xF00) >> 8] = op & 0xFF & Math.floor(Math.random() * 0xFF);
 		this.pc += 2;
 	}
 
@@ -563,10 +553,9 @@ class InstructionSet {
 		for (col = 0; col < height; col++) {
 			spriteRow = this.memory[this.I + col];
 			for (row = 0; row < 8; row++) {
-				if (spriteRow & (0x80 >> row)) {
-					if (this.graphics[x + row + 64*(y + col)])
-						this.V[0xF] = 1;
-					this.graphics[x + row + 64*(y + col)] ^= 1;
+				if (spriteRow & 0x80 >> row) {
+					if (this.graphics[x + row + 64 * (y + col)]) this.V[0xF] = 1;
+					this.graphics[x + row + 64 * (y + col)] ^= 1;
 				}
 			}
 		}
@@ -576,12 +565,12 @@ class InstructionSet {
 
 	// Ex9E - Skip next instruction if key with value stored in Vx is pressed
 	SKP_Vx(op) {
-		this.pc += this.keyBoard[this.V[(op & 0xF00) >> 8]]? 4: 2;
+		this.pc += this.keyBoard[this.V[(op & 0xF00) >> 8]] ? 4 : 2;
 	}
 
 	// ExA1 - Skip next instruction if key with value stored in Vx is NOT pressed
 	SKNP_Vx(op) {
-		this.pc += !this.keyBoard[this.V[(op & 0xF00) >> 8]]? 4: 2;
+		this.pc += !this.keyBoard[this.V[(op & 0xF00) >> 8]] ? 4 : 2;
 	}
 
 	// Fx07 - Set Vx = value stored in delay timer
@@ -617,7 +606,7 @@ class InstructionSet {
 	// Fx1E - Set I = I + Vx
 	ADD_I_Vx(op) {
 		let x = (op & 0xF00) >> 8;
-		this.V[0xF] = (this.V[x] + this.I > 0xFFF)? 1: 0;
+		this.V[0xF] = this.V[x] + this.I > 0xFFF ? 1 : 0;
 		this.I += this.V[x];
 		this.pc += 2;
 	}
@@ -641,7 +630,7 @@ class InstructionSet {
 	// Fx55 - Store registers V0 through Vx in memory starting at location I
 	LD_I_Vx(op) {
 		let i = 0;
-		while (i <= ((op & 0xF00) >> 8)) {
+		while (i <= (op & 0xF00) >> 8) {
 			this.memory[this.I + i] = this.V[i];
 			i++;
 		}
@@ -651,7 +640,7 @@ class InstructionSet {
 	// Fx65 - Read registers V0 through Vx from memory starting at location I
 	LD_Vx_I(op) {
 		let i = 0;
-		while (i <= ((op & 0xF00) >> 8)) {
+		while (i <= (op & 0xF00) >> 8) {
 			this.V[i] = this.memory[this.I + i];
 			i++;
 		}
@@ -665,19 +654,18 @@ module.exports = InstructionSet;
 /* 3 */
 /***/ (function(module, exports, __webpack_require__) {
 
-const {fetchFile, handleUpload} = __webpack_require__(0);
+const { fetchFile, handleUpload } = __webpack_require__(0);
 
 (function () {
-	document.addEventListener('DOMContentLoaded',function() {
-	    document.querySelector('select[name="games"]').onchange=fetchFile;
-	},false);
+	document.addEventListener('DOMContentLoaded', function () {
+		document.querySelector('select[name="games"]').onchange = fetchFile;
+	}, false);
 
-	document.addEventListener('DOMContentLoaded', function() {
+	document.addEventListener('DOMContentLoaded', function () {
 		var fileInput = document.getElementById("fileInput");
 		fileInput.addEventListener("change", handleUpload, false);
 	}, false);
 })();
-
 
 /***/ })
 /******/ ]);
