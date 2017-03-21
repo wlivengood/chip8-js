@@ -2,7 +2,7 @@
   "name": "chip-8",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "server/index.js",
   "dependencies": {
     "babel-core": "^6.24.0",
     "babel-loader": "^6.4.1",
