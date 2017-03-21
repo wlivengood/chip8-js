@@ -25,6 +25,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "heroku-postbuild": "webpack --config webpack.config.js"
   },
+  "engine": {
+    "node": "6.2.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/wlivengood/chip8-js.git"
