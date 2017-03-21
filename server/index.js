@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const port = process.env.PORT | 8080;
 
 app.use(express.static('bin'));
 
@@ -12,6 +13,6 @@ app.get('/games/:game', function(req, res, next) {
 	});
 });
 
-app.listen(1337, function() {
-	console.log("listening on Port 1337");
+app.listen(port, function() {
+	console.log("listening on Port " + port);
 });
