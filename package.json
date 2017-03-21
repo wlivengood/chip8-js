@@ -27,7 +27,8 @@
     "heroku-postbuild": "webpack --config webpack.config.js"
   },
   "engine": {
-    "node": "6.2.1"
+    "node": "6.2.1",
+    "npm": "3.9.3"
   },
   "repository": {
     "type": "git",
