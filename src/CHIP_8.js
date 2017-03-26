@@ -149,7 +149,7 @@ class CHIP_8 {
 		document.onkeydown = document.onkeyup = this.updateKeyBoard.bind(this);
 
 		// Hook into display canvas
-		this.display = document.getElementById("display").getContext("2d");
+		this.display = document.getElementById("screen").getContext("2d");
 
 		// Set start-up flag to true
 		this.isInitialized = true;
@@ -182,7 +182,7 @@ class CHIP_8 {
 	render () {
 		if (this.drawFlag) {
 			let i, x, y;
-			this.display.fillStyle = "black";
+			this.display.fillStyle = "blue";
 			this.display.fillRect(0, 0, 64*15, 32*15);
 			this.display.fillStyle = "white";
 			for (i = 0; i < this.graphics.length; i++) {
