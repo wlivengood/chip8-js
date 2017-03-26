@@ -1,0 +1,61 @@
+.header {
+	border-bottom: 1px solid #fff;
+	margin: 0px auto 0px auto;
+	background-color: blue;
+	height: 70px;
+	font-family: 'Press Start 2P', cursive;
+	color: #fff;
+}
+
+.header h1 {
+	padding: 20px 20px 20px 20px;
+}
+
+.header ul {
+	float:right;
+	list-style: none;
+	margin-top: 26px;
+}
+
+.header ul li {
+    float: left;
+    width: 150px;
+    text-align: center;
+}
+
+.header a {
+	text-decoration: none;
+	color: #fff;
+}
+
+.about {
+	background-color: blue;
+	font-family: 'Press Start 2P', cursive;
+	color: #fff;
+}
+
+.about p {
+	line-height: 20px;
+}
+
+#screen {
+	border: 3px solid #fff;
+}
+
+.display {
+	background-color: blue;
+}
+
+.footer {
+	border-top: 1px solid #fff;
+	margin: 0px auto 0px auto;
+	background-color: blue;
+	height: 70px;
+	font-family: 'Press Start 2P', cursive;
+	color: #fff;
+}
+
+.footer div {
+	padding: 20px 20px 20px 20px;
+	display: inline-block;
+}
