@@ -6,7 +6,7 @@ const handleFiles = (file) => {
 	chip8.initialize().loadROM(file);
 	if (interval)
 		window.clearInterval(interval);
-	interval = window.setInterval(() => chip8.run(), 1);
+	interval = window.setInterval(() => chip8.run(), 2);
 };
 
 const handleUpload = (event) => {
