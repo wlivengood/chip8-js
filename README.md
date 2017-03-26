@@ -1,6 +1,6 @@
 # Chip-8.js
 ##### A CHIP-8 interpreter in Javascript
-### Deployed at: chip8js.herokuapp.com
+### Play it [here](https://chip8js.herokuapp.com/)
 ### To run locally, clone this repo and run:
 ```
 npm install
